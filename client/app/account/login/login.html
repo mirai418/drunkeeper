@@ -1,0 +1,20 @@
+
+<div class="container full-height">
+
+  <form class="form v-padding-large h-padding-medium" name="form" ng-submit="login(form)" novalidate>
+
+    <div class="form-group">
+      <input type="email" name="email" class="form-control" ng-class="{'error': error}" ng-model="user.email" required placeholder="EMAIL" autocomplete="off">
+    </div>
+
+    <div class="form-group">
+      <input type="password" name="password" class="form-control" ng-class="{'error': error}"  ng-model="user.password" required placeholder="PASSWORD">
+    </div>
+
+    <div class="v-margin-medium right-text-align">
+      <input type="submit" name="" value="Log In" class="btn">
+    </div>
+
+  </form>
+
+</div>

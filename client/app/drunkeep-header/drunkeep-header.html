@@ -1,0 +1,26 @@
+<header class="drunkeep-header">
+
+  <div class="container">
+
+    <a href="/#/" title="" class="btn pull-left v-margin-medium" ng-show="!isHome()">
+      Home
+    </a>
+
+    <span class="pull-right" ng-show="isLoggedIn">
+      <a href="/#/user" title="" class="btn v-margin-medium">
+        {{user.email}}
+      </a>
+      <div ng-click="logout()" class="btn btn-narrow v-margin-medium">
+      <i class="fa fa-fw fa-sign-out"></i>
+      </div>
+    </span>
+
+    <span class="pull-right" ng-show="!isLoggedIn">
+      <a href="/#/login" title="" class="btn v-margin-medium">
+        Log In
+      </a>
+    </span>
+
+  </div>
+
+</header>

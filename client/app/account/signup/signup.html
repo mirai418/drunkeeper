@@ -1,0 +1,46 @@
+
+<div class="container full-height">
+
+  <form class="form v-padding-large h-padding-medium" name="form" ng-submit="signup(form)" novalidate>
+
+    <div class="form-group" ng-class="{ 'has-success': form.email.$valid && submitted,
+                                        'has-error': form.email.$invalid && submitted }">
+      <input type="email" name="email" class="form-control" ng-model="user.email"
+             placeholder="EMAIL"
+             autocomplete="off"
+             required
+             mongoose-error/>
+      <p class="help-block" ng-show="form.email.$error.email && submitted">
+        Doesn't look like a valid email.
+      </p>
+      <p class="help-block" ng-show="form.email.$error.required && submitted">
+        What's your email address?
+      </p>
+      <p class="help-block" ng-show="form.email.$error.mongoose">
+        {{ errors.email }}
+      </p>
+    </div>
+
+    <div class="form-group" ng-class="{ 'has-success': form.password.$valid && submitted,
+                                        'has-error': form.password.$invalid && submitted }">
+      <input type="password" name="password" class="form-control" ng-model="user.password"
+             placeholder="PASSWORD"
+             ng-minlength="3"
+             required
+             mongoose-error/>
+      <p class="help-block"
+         ng-show="(form.password.$error.minlength || form.password.$error.required) && submitted">
+        Password must be at least 3 characters.
+      </p>
+      <p class="help-block" ng-show="form.password.$error.mongoose">
+        {{ errors.password }}
+      </p>
+    </div>
+
+    <div class="v-margin-medium right-text-align">
+      <input type="submit" name="" value="Sign Up!" class="btn">
+    </div>
+
+  </form>
+
+</div>
