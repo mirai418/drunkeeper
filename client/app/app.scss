@@ -43,6 +43,12 @@ $fa-font-path: "/bower_components/font-awesome/fonts";
   user-select: $args;
 }
 
+@mixin transition($args) {
+  -webkit-transition: $args;
+  -ms-transition: $args;
+  transition: $args;
+}
+
 html, body {
   width: 100%;
   height: 100%;
@@ -217,6 +223,10 @@ h1 {
 
 }
 
+.what-title {
+  letter-spacing: 3c px;
+}
+
 h2 {
 
   font-weight: 100;
@@ -324,16 +334,32 @@ html[xmlns] .clearfix {
   text-align: right;
 }
 
+$input-height: 32px;
+$input-border-radius: 2px;
+$input-padding-size: 3px;
+$input-letter-spacing: 2px;
+$input-font-weight: 300;
+$input-font-size: 14px;
+
 .btn {
-  padding: 3px 18px;
-  background-color: $theme-color;
-  color: $theme-color-dark;
-  font-size: 15px;
   display: inline-block;
-  border-radius: 2px;
+
+  height: $input-height;
+
+  padding: $input-padding-size 18px;
+
+  background-color: $theme-color;
+  border-radius: $input-border-radius;
   cursor: pointer;
-  // text-transform: uppercase;
-  letter-spacing: 1px;
+
+  line-height: $input-height - (2 * $input-padding-size);
+  font-size: $input-font-size;
+  color: $theme-color-dark;
+  text-transform: uppercase;
+  letter-spacing: $input-letter-spacing;
+  font-weight: $input-font-weight;
+
+  @include transition((background-color ease-in-out 0.15s, color ease-in-out 0.15s));
 
   &:hover {
     background-color: $theme-hover-color;
@@ -341,29 +367,31 @@ html[xmlns] .clearfix {
   }
 
   &.btn-narrow {
-    padding: 3px 6px;
+    padding: $input-padding-size 6px;
   }
 
 }
 
 input {
   display: block;
+
   width: 100%;
-  height: 32px;
-  padding: 4px;
-  font-size: 14px;
-  line-height: 1.42857;
-  color: #555555;
-  background-color: #fff;
+  height: $input-height;
+
+  padding: $input-padding-size;
+
+  background-color: $white;
   background-image: none;
   border: 0px;
-  border-radius: 2px;
+  border-radius: $input-border-radius;
+
   box-shadow: none;
-  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  @include transition((border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s));
 
-  font-weight: 300;
-  letter-spacing: 2px;
-
+  font-size: $input-font-size;
+  color: #555555;
+  font-weight: $input-font-weight;
+  letter-spacing: $input-letter-spacing;
   text-align: center;
 
   &:focus {
@@ -374,6 +402,10 @@ input {
 
   &.error {
     color: #a60000 !important;
+  }
+
+  &.small-text {
+
   }
 }
 

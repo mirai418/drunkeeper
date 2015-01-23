@@ -7,8 +7,6 @@ angular.module('drunkeeperApp')
       restrict: 'EA',
       link: function (scope) {
 
-        console.log(Auth);
-
         scope.isLoggedIn = Auth.isLoggedInAsync(function (response){
           scope.isLoggedIn = response;
           if (scope.isLoggedIn) {

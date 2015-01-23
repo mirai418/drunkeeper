@@ -10,6 +10,20 @@ var validationError = function(res, err) {
 };
 
 /**
+ * Get's mirai's data.
+ */
+exports.mirai = function(req, res) {
+  User.findOne({
+    email: 'mirai418@me.com'
+  }, '-salt -hashedPassword -email -provider -role', function(err, user) { // don't ever give out the password or salt
+    if (err) return next(err);
+    if (!user) return res.json(401);
+    res.json(user);
+  });
+};
+
+
+/**
  * Get list of users
  * restriction: 'admin'
  */
@@ -90,6 +104,44 @@ exports.me = function(req, res, next) {
     if (err) return next(err);
     if (!user) return res.json(401);
     res.json(user);
+  });
+};
+
+/**
+ * Add a drink
+ */
+exports.drink = function(req, res, next) {
+  console.log('draaaaaaank');
+  var userId = req.user._id;
+  User.findOne({
+    _id: userId
+  }, '-salt -hashedPassword', function(err, user) { // don't ever give out the password or salt
+    if (err) return next(err);
+    if (!user) return res.json(401);
+    user.drinks.push({});
+    user.save(function(err) {
+      if (err) return validationError(res, err);
+      res.send(200);
+    });
+  });
+};
+
+
+/**
+ * Remove a drink
+ */
+exports.undrink = function(req, res, next) {
+  var userId = req.user._id;
+  User.findOne({
+    _id: userId
+  }, '-salt -hashedPassword', function(err, user) { // don't ever give out the password or salt
+    if (err) return next(err);
+    if (!user) return res.json(401);
+    user.drinks.pop();
+    user.save(function(err) {
+      if (err) return validationError(res, err);
+      res.send(200);
+    });
   });
 };
 
