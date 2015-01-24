@@ -12,13 +12,13 @@ footer.drunkeep-footer {
   p {
     text-transform: uppercase;
     font-weight: 300;
-    font-size: 14px;
+    font-size: 13px;
     letter-spacing: 2px;
-    color: #555;
-  }
+    color: #888;
 
-  p.copyright {
-    font-size: 12px;
+    @media screen and (max-width: 480px) {
+      font-size: 11px;
+    }
   }
 
 }
