@@ -115,9 +115,9 @@ $theme-color-dark: #2FB646;
 .plus-one {
   background-color: rgba(0, 0, 200, 0.3);
 
-  height: 90vw;
-  width: 90vw;
-  margin: 10vw 5vw;
+  height: 80vw;
+  width: 80vw;
+  margin: 10vw;
 
   @media screen and (orientation:landscape) {
     height: 70vh;
@@ -148,9 +148,9 @@ $theme-color-dark: #2FB646;
   &.clickable:active {
     background-color: rgba(0, 0, 200, 0.6);
 
-    height: 92vw;
-    width: 92vw;
-    margin: 9vw 4vw;
+    height: 82vw;
+    width: 82vw;
+    margin: 9vw;
 
     @media screen and (orientation:landscape) {
       height: 72vh;

@@ -9,12 +9,12 @@ angular.module('drunkeeperApp')
       $http.post('/api/users/drink').success(function() {
         $scope.user.drinks.push({});
       });
-    }
+    };
 
     $scope.undrink = function () {
       $http.post('/api/users/undrink').success(function() {
         $scope.user.drinks.pop();
       });
-    }
+    };
 
   });

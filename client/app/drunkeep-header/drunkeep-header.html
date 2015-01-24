@@ -7,19 +7,19 @@
     </a>
 
     <span class="pull-right" ng-show="isLoggedIn">
-      <a href="/#/user" title="" class="btn v-margin-medium">
+      <a href="/#/user" title="" class="btn v-margin-medium h-margin-x-small">
         {{user.email}}
       </a>
-      <div ng-click="logout()" class="btn btn-narrow v-margin-medium">
-      <i class="fa fa-fw fa-sign-out"></i>
+      <div ng-click="logout()" class="btn btn-narrow v-margin-medium h-margin-x-small">
+        <i class="fa fa-fw fa-sign-out"></i>
       </div>
     </span>
 
     <span class="pull-right" ng-show="!isLoggedIn">
-      <a href="/#/login" title="" class="btn v-margin-medium" ng-show="!isPath('/login')">
+      <a href="/#/login" title="" class="btn v-margin-medium h-margin-x-small" ng-show="!isPath('/login')">
         Log In
       </a>
-      <a href="/#/signup" title="" class="btn v-margin-medium" ng-show="isPath('/login')">
+      <a href="/#/signup" title="" class="btn v-margin-medium h-margin-x-small" ng-show="isPath('/login')">
         Sign Up
       </a>
     </span>

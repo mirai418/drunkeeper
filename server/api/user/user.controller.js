@@ -16,7 +16,7 @@ exports.mirai = function(req, res) {
   User.findOne({
     email: 'mirai418@me.com'
   }, '-salt -hashedPassword -email -provider -role', function(err, user) { // don't ever give out the password or salt
-    if (err) return next(err);
+    if(err) return res.send(500, err);
     if (!user) return res.json(401);
     res.json(user);
   });

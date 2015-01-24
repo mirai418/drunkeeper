@@ -26,14 +26,14 @@ angular.module('drunkeeperApp')
 
         scope.$watch(function () {
           return Auth.getCurrentUser();
-        }, function (newValue) {
+        }, function () {
           scope.isLoggedIn = Auth.isLoggedInAsync(function (response){
             scope.isLoggedIn = response;
             if (scope.isLoggedIn) {
               scope.user = Auth.getCurrentUser();
             }
           });
-        })
+        });
 
       }
     };
