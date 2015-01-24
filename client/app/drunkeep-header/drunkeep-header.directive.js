@@ -14,8 +14,8 @@ angular.module('drunkeeperApp')
           }
         });
 
-        scope.isHome = function () {
-          return $location.$$path === '/';
+        scope.isPath = function (path) {
+          return $location.$$path === path;
         };
 
         scope.logout = function () {
@@ -23,6 +23,17 @@ angular.module('drunkeeperApp')
           console.log('logged out');
           $location.path('/');
         };
+
+        scope.$watch(function () {
+          return Auth.getCurrentUser();
+        }, function (newValue) {
+          scope.isLoggedIn = Auth.isLoggedInAsync(function (response){
+            scope.isLoggedIn = response;
+            if (scope.isLoggedIn) {
+              scope.user = Auth.getCurrentUser();
+            }
+          });
+        })
 
       }
     };

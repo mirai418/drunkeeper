@@ -14,9 +14,7 @@ angular.module('drunkeeperApp')
   $scope.mirai = [];
 
   $http.get('/api/users/mirai').success(function (response) {
-    console.log(response);
     $scope.mirai.push(response);
-
     socket.syncUpdates('mirai', $scope.mirai);
   });
 

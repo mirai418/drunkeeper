@@ -116,6 +116,7 @@ exports.drink = function(req, res, next) {
   User.findOne({
     _id: userId
   }, '-salt -hashedPassword', function(err, user) { // don't ever give out the password or salt
+    console.log('ready');
     if (err) return next(err);
     if (!user) return res.json(401);
     user.drinks.push({});

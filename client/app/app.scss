@@ -55,9 +55,9 @@ html, body {
 }
 
 .container {
-  width: 100%;
+  width: 98%;
   margin: 0;
-  padding: 0;
+  padding: 0 1%;
 
   @media screen and (min-width: 960px) {
     width: 960px;
@@ -259,9 +259,21 @@ h3, p {
   color: $black;
   letter-spacing: 1px;
 
+  &.sidenote {
+    color: #555;
+    font-size: 14px;
+    line-height: 1.1;
+  }
+
   @media screen and (max-width: 480px) {
     font-size: 14px;
+
+    &.sidenote {
+      font-size: 12px;
+    }
   }
+
+
 
 }
 

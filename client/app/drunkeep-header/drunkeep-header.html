@@ -2,7 +2,7 @@
 
   <div class="container">
 
-    <a href="/#/" title="" class="btn pull-left v-margin-medium" ng-show="!isHome()">
+    <a href="/#/" title="" class="btn pull-left v-margin-medium" ng-show="!isPath('/')">
       Home
     </a>
 
@@ -16,8 +16,11 @@
     </span>
 
     <span class="pull-right" ng-show="!isLoggedIn">
-      <a href="/#/login" title="" class="btn v-margin-medium">
+      <a href="/#/login" title="" class="btn v-margin-medium" ng-show="!isPath('/login')">
         Log In
+      </a>
+      <a href="/#/signup" title="" class="btn v-margin-medium" ng-show="isPath('/login')">
+        Sign Up
       </a>
     </span>
 
