@@ -9,6 +9,6 @@ angular.module('drunkeeperApp')
         console.log('--> responded');
         console.log(response);
       });
-    }
+    };
 
   });

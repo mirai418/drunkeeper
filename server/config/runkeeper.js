@@ -3,7 +3,7 @@ var runkeeper = require('runkeeper-js');
 var passport = require('passport');
 
 // Set up your client's options
-options = {
+var options = {
 
     // Client ID (Required): 
     // This value is the OAuth 2.0 client ID for your application.  
