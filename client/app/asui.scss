@@ -1,0 +1,219 @@
+/*-------------------------------------------------------------*/
+/* COMMON SPACING */
+.no-margin {
+  margin: 0 !important; }
+
+.no-padding {
+  padding: 0 !important; }
+
+.no-top-margin {
+  margin-top: 0 !important; }
+
+.no-left-margin {
+  margin-left: 0 !important; }
+
+.no-bottom-margin {
+  margin-bottom: 0 !important; }
+
+.no-right-margin {
+  margin-right: 0 !important; }
+
+.no-top-padding {
+  padding-top: 0 !important; }
+
+.no-left-padding {
+  padding-left: 0 !important; }
+
+.no-bottom-padding {
+  padding-bottom: 0 !important; }
+
+.no-right-padding {
+  padding-right: 0 !important; }
+
+/* Vertical Margins */
+.v-margin-x-small {
+  margin-top: 3px;
+  margin-bottom: 3px; }
+
+.v-margin-small {
+  margin-top: 5px;
+  margin-bottom: 5px; }
+
+.v-margin-medium {
+  margin-top: 10px;
+  margin-bottom: 10px; }
+
+.v-margin-large {
+  margin-top: 20px;
+  margin-bottom: 20px; }
+
+.v-margin-x-large {
+  margin-top: 40px;
+  margin-bottom: 40px; }
+
+/* End Vertical Margins */
+/* Vertical Padding */
+.v-padding-x-small {
+  padding-top: 3px;
+  padding-bottom: 3px; }
+
+.v-padding-small {
+  padding-top: 5px;
+  padding-bottom: 5px; }
+
+.v-padding-medium {
+  padding-top: 10px;
+  padding-bottom: 10px; }
+
+.v-padding-large {
+  padding-top: 20px;
+  padding-bottom: 20px; }
+
+.v-padding-x-large {
+  padding-top: 40px;
+  padding-bottom: 40px; }
+
+/* End Vertical Padding */
+/* Horizontal Margins */
+.h-margin-x-small {
+  margin-left: 3px;
+  margin-right: 3px; }
+
+.h-margin-small {
+  margin-left: 5px;
+  margin-right: 5px; }
+
+.h-margin-medium {
+  margin-left: 10px;
+  margin-right: 10px; }
+
+.h-margin-large {
+  margin-left: 20px;
+  margin-right: 20px; }
+
+.h-margin-x-large {
+  margin-left: 40px;
+  margin-right: 40px; }
+
+/* End Horizontal Margins */
+/* Horizontal Padding */
+.h-padding-x-small {
+  padding-left: 3px;
+  padding-right: 3px; }
+
+.h-padding-small {
+  padding-left: 5px;
+  padding-right: 5px; }
+
+.h-padding-medium {
+  padding-left: 10px;
+  padding-right: 10px; }
+
+.h-padding-large {
+  padding-left: 20px;
+  padding-right: 20px; }
+
+.h-padding-x-large {
+  padding-left: 40px;
+  padding-right: 40px; }
+
+/* End Horizontal Padding */
+/* BEGIN MOBILE SIZING */
+@media screen and (max-width: 500px) {
+  /* Vertical Margins */
+  .v-margin-x-small {
+    margin-top: 2px;
+    margin-bottom: 2px; }
+
+  .v-margin-small {
+    margin-top: 4px;
+    margin-bottom: 4px; }
+
+  .v-margin-medium {
+    margin-top: 8px;
+    margin-bottom: 8px; }
+
+  .v-margin-large {
+    margin-top: 16px;
+    margin-bottom: 16px; }
+
+  .v-margin-x-large {
+    margin-top: 32px;
+    margin-bottom: 32px; }
+
+  /* End Vertical Margins */
+  /* Vertical Padding */
+  .v-padding-x-small {
+    padding-top: 2px;
+    padding-bottom: 2px; }
+
+  .v-padding-small {
+    padding-top: 4px;
+    padding-bottom: 4px; }
+
+  .v-padding-medium {
+    padding-top: 8px;
+    padding-bottom: 8px; }
+
+  .v-padding-large {
+    padding-top: 16px;
+    padding-bottom: 16px; }
+
+  .v-padding-x-large {
+    padding-top: 32px;
+    padding-bottom: 32px; }
+
+  /* End Vertical Padding */
+  /* Horizontal Margins */
+  .h-margin-x-small {
+    margin-left: 2px;
+    margin-right: 2px; }
+
+  .h-margin-small {
+    margin-left: 4px;
+    margin-right: 4px; }
+
+  .h-margin-medium {
+    margin-left: 8px;
+    margin-right: 8px; }
+
+  .h-margin-large {
+    margin-left: 16px;
+    margin-right: 16px; }
+
+  .h-margin-x-large {
+    margin-left: 32px;
+    margin-right: 32px; }
+
+  /* End Horizontal Margins */
+  /* Horizontal Padding */
+  .h-padding-x-small {
+    padding-left: 2px;
+    padding-right: 2px; }
+
+  .h-padding-small {
+    padding-left: 4px;
+    padding-right: 4px; }
+
+  .h-padding-medium {
+    padding-left: 8px;
+    padding-right: 8px; }
+
+  .h-padding-large {
+    padding-left: 16px;
+    padding-right: 16px; }
+
+  .h-padding-x-large {
+    padding-left: 32px;
+    padding-right: 32px; }
+
+  /* End Horizontal Padding */ }
+/* END MOBILE SIZING */
+
+@media screen and (orientation:landscape) and (max-width: 768px) {
+
+  .v-padding-x-large {
+    padding-bottom: 0;
+  }
+
+}
