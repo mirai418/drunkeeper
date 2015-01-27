@@ -1,9 +1,9 @@
 $fa-font-path: "/bower_components/font-awesome/fonts";
 
 @import 'font-awesome/scss/font-awesome';
-@import 'bootstrap_essentials.scss';
-@import 'normalize.scss';
-@import 'asui.scss';
+@import '../assets/styles/normalize.scss';
+@import '../assets/styles/bootstrap_essentials.scss';
+@import '../assets/styles/asui.scss';
 
 /**************** SASS VARIABLES ****************/
 
@@ -75,12 +75,9 @@ $input-font-size: 14px;
 // injector
 @import 'account/login/login.scss';
 @import 'admin/admin.scss';
-@import 'asui.scss';
-@import 'bootstrap_essentials.scss';
 @import 'drunkeep-footer/drunkeep-footer.scss';
 @import 'drunkeep-header/drunkeep-header.scss';
 @import 'main/main.scss';
-@import 'normalize.scss';
 @import 'runkeeper/runkeeper.scss';
 @import 'user/user.scss';
 @import 'what/what.scss';
