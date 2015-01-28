@@ -3,6 +3,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var crypto = require('crypto');
+var findOrCreate = require('mongoose-findorcreate')
 
 var UserSchema = new Schema({
   drinks: [{ date: { type: Date, default: Date.now } }],
@@ -11,24 +12,24 @@ var UserSchema = new Schema({
     type: String,
     default: 'user'
   },
-  hashedPassword: String,
   provider: String,
-  salt: String
 });
+
+UserSchema.plugin(findOrCreate);
 
 /**
  * Virtuals
  */
-UserSchema
-  .virtual('password')
-  .set(function(password) {
-    this._password = password;
-    this.salt = this.makeSalt();
-    this.hashedPassword = this.encryptPassword(password);
-  })
-  .get(function() {
-    return this._password;
-  });
+// UserSchema
+//   .virtual('password')
+//   .set(function(password) {
+//     this._password = password;
+//     this.salt = this.makeSalt();
+//     this.hashedPassword = this.encryptPassword(password);
+//   })
+//   .get(function() {
+//     return this._password;
+//   });
 
 // Public profile information
 UserSchema
@@ -55,18 +56,18 @@ UserSchema
  */
 
 // Validate empty email
-UserSchema
-  .path('email')
-  .validate(function(email) {
-    return email.length;
-  }, 'Email cannot be blank');
+// UserSchema
+//   .path('email')
+//   .validate(function(email) {
+//     return email.length;
+//   }, 'Email cannot be blank');
 
 // Validate empty password
-UserSchema
-  .path('hashedPassword')
-  .validate(function(hashedPassword) {
-    return hashedPassword.length;
-  }, 'Password cannot be blank');
+// UserSchema
+//   .path('hashedPassword')
+//   .validate(function(hashedPassword) {
+//     return hashedPassword.length;
+//   }, 'Password cannot be blank');
 
 // Validate email is not taken
 UserSchema
@@ -94,9 +95,9 @@ UserSchema
   .pre('save', function(next) {
     if (!this.isNew) return next();
 
-    if (!validatePresenceOf(this.hashedPassword))
-      next(new Error('Invalid password'));
-    else
+    // if (!validatePresenceOf(this.hashedPassword))
+      // next(new Error('Invalid password'));
+    // else
       next();
   });
 

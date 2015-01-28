@@ -13,15 +13,16 @@ exports.setup = function (User, config) {
   //   have a database of user records, the complete RunKeeper profile is
   //   serialized and deserialized.
   passport.serializeUser(function(user, done) {
-    console.log(user);
+    console.log('serialize');
+    // console.log(user);
     done(null, user._id);
   });
 
   passport.deserializeUser(function(id, done) {
     User.findById(id, function(err, user) {
-      console.log('--> hey');
-      console.log(user);
-      console.log(err);
+      // console.log('--> hey');
+      // console.log(user);
+      // console.log(err);
       done(err, user);
     });
   });
@@ -32,7 +33,8 @@ exports.setup = function (User, config) {
       callbackURL: runkeeperOptions.redirect_uri
     },
     function(accessToken, refreshToken, profile, done) {
-      console.log(profile);
+      console.log('passport.use');
+      // console.log(profile);
       User.findOrCreate({ runkeeperId: profile.id }, function (err, user) {
         return done(err, user);
       });
