@@ -23,3 +23,9 @@
   //   }
   // );
 // });
+
+var User = require('../api/user/user.model');
+
+User.find({}).remove(function() {
+  console.log('removed all users.');
+});

@@ -5,16 +5,24 @@ var Schema = mongoose.Schema;
 var crypto = require('crypto');
 var findOrCreate = require('mongoose-findorcreate')
 
+var runkeeperClient = require('../../config/runkeeper');
+
 var UserSchema = new Schema({
-  drinks: [{ date: { type: Date, default: Date.now } }],
   name: String,
   role: {
     type: String,
     default: 'user'
   },
-  provider: String,
+
   runkeeperId: Number,
-  accessToken: String
+  accessToken: String,
+
+  drinks: [{ date: { type: Date, default: Date.now } }],
+  runs: [{ runId: Number, date: Date, distance: Number }],
+
+  score: Number,
+  lastUpdated: Date
+
 });
 
 UserSchema.plugin(findOrCreate);
@@ -53,42 +61,60 @@ UserSchema
     };
   });
 
-/**
- * Validations
- */
-
-// Validate empty email
-// UserSchema
-//   .path('email')
-//   .validate(function(email) {
-//     return email.length;
-//   }, 'Email cannot be blank');
-
-// Validate empty password
-// UserSchema
-//   .path('hashedPassword')
-//   .validate(function(hashedPassword) {
-//     return hashedPassword.length;
-//   }, 'Password cannot be blank');
-
-// Validate email is not taken
-// UserSchema
-//   .path('email')
-//   .validate(function(value, respond) {
-//     var self = this;
-//     this.constructor.findOne({email: value}, function(err, user) {
-//       if(err) throw err;
-//       if(user) {
-//         if(self.id === user.id) return respond(true);
-//         return respond(false);
-//       }
-//       respond(true);
-//     });
-// }, 'The specified email address is already in use.');
-
 var validatePresenceOf = function(value) {
   return value && value.length;
 };
+
+var MILLISEC_IN_DAY = 1000 * 60 * 60 * 24;
+
+Date.prototype.getWeek = function () {
+
+  var d = new Date(+this);
+  var yearStart = new Date(d.getFullYear(), 0, 1);
+  var yearMillisecOffset = (8 - yearStart.getDay()) * MILLISEC_IN_DAY;
+
+  var yearMillis = d.getTime() - yearStart.getTime();
+  return Math.floor((yearMillis + yearMillisecOffset) / (MILLISEC_IN_DAY * 7));
+
+}
+
+Date.prototype.toRKdate = function () {
+  var year, month, day;
+  year = String(this.getFullYear());
+  month = String(this.getMonth() + 1);
+  if (month.length == 1) {
+    month = "0" + month;
+  }
+  day = String(this.getDate());
+  if (day.length == 1) {
+    day = "0" + day;
+  }
+  return year + "-" + month + "-" + day;
+}
+
+Date.prototype.isToday = function () {
+  return Math.abs(this.getTime() - (new Date().getTime())) < MILLISEC_IN_DAY;
+}
+
+var weekDifference = function (d1, d2) {
+  return Math.abs(d2.getWeek() - d1.getWeek());
+}
+
+var getActivityFeedEndpoint = function (from, to, page, pageSize) {
+
+  to = to || new Date();
+  page = page || 0;
+  pageSize = pageSize || 25;
+
+  var baseEndPoint = '/fitnessActivities?';
+  var params = [];
+  params.push('page=' + String(page));
+  params.push('pageSize=' + String(pageSize));
+  params.push('noEarlierThan=' + from.toRKdate());
+  params.push('noLaterThan=' + to.toRKdate());
+
+  return baseEndPoint + params.join("&");
+}
 
 /**
  * Pre-save hook
@@ -107,6 +133,77 @@ UserSchema
  * Methods
  */
 UserSchema.methods = {
+
+  getRunkeeperName: function (cb) {
+    var self = this;
+    runkeeperClient.access_token = self.accessToken;
+    runkeeperClient.profile(function (err, response) {
+        if (err) {
+          return cb(false);
+        }
+        self.name = response.name;
+        self.save(function(err) {
+          if (err) {
+            return cb(false);
+          }
+          return cb(true);
+        });
+    });
+  },
+
+  getNewRuns: function (cb) {
+
+    var TODAY = new Date(2015, 0, 25, 16);
+    console.log('TODAY IS: ' + TODAY);
+
+    var self = this;
+    runkeeperClient.access_token = self.accessToken;
+
+    var media_type = 'application/vnd.com.runkeeper.FitnessActivityFeed+json';
+    var from = self.lastUpdated || new Date(2015, 0, 1);
+    var endpoint = getActivityFeedEndpoint(from);
+
+    runkeeperClient.apiCall('GET', media_type, endpoint, function (err, response) {
+      if (err) {
+        return cb(false);
+      }
+      var runs = response.items;
+      var newRuns = [];
+      var runId, date, distance;
+      var lastRunId = (self.runs.length === 0) ? 0 : self.runs[self.runs.length - 1].runId;
+
+      for (var i = 0; i < runs.length; i++) {
+        runId = parseInt(runs[i].uri.split("/")[2], 10);
+        if (runId > lastRunId) {
+          date = new Date(runs[i].start_time);
+          distance = runs[i].total_distance;
+          newRuns.unshift({
+            runId: runId,
+            date: date,
+            distance: distance
+          });
+        } else {
+          console.log('already recorded');
+        }
+
+      }
+      console.log(newRuns);
+      self.runs = self.runs.concat(newRuns);
+      console.log(self.runs);
+      self.lastUpdated = new Date();
+      self.save(function(err) {
+        if (err) {
+          return cb(false);
+        }
+        return cb(true);
+      });
+    });
+  },
+
+  computeNewScore: function () {
+
+  },
+
   /**
    * Authenticate - check if the passwords are the same
    *

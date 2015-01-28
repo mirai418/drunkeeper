@@ -31,18 +31,18 @@ exports.setup = function (User, config) {
       User.findOrCreate({ runkeeperId: profile.id }, function (err, user) {
         user.accessToken = accessToken;
 
+        user.getNewRuns(function (success) {
+          
+        });
+
         if (!user.name) {
-          runkeeperClient.access_token = accessToken;
-          runkeeperClient.profile(function(err, response) {
-              if (err) {
-                console.log(err);
-              }
-              user.name = response.name;
-              user.save(function(err) {
-                if (err) return res.json(422, err);
-                return done(err, user);
-              });
-          });
+          user.getRunkeeperName(function (success) {
+            if (success) {
+              return done(err, user);
+            } else {
+              return res.json(422, err);
+            }
+          })
         } else {
           user.save(function(err) {
             if (err) return res.json(422, err);
