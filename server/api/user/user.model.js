@@ -13,6 +13,8 @@ var UserSchema = new Schema({
     default: 'user'
   },
   provider: String,
+  runkeeperId: Number,
+  accessToken: String
 });
 
 UserSchema.plugin(findOrCreate);

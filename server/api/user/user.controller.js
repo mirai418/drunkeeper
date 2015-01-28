@@ -13,10 +13,8 @@ var validationError = function(res, err) {
  * Get's mirai's data.
  */
 exports.mirai = function(req, res) {
-  console.log('mirai:');
-  console.log(req);
   User.findOne({
-    email: 'mirai418@me.com'
+    runkeeperId: 31503880
   }, '-salt -hashedPassword -email -provider -role', function(err, user) { // don't ever give out the password or salt
     if(err) return res.send(500, err);
     if (!user) return res.json(401);

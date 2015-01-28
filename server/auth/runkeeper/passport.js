@@ -33,9 +33,10 @@ exports.setup = function (User, config) {
       callbackURL: runkeeperOptions.redirect_uri
     },
     function(accessToken, refreshToken, profile, done) {
-      console.log('passport.use');
-      // console.log(profile);
+      console.log(profile);
       User.findOrCreate({ runkeeperId: profile.id }, function (err, user) {
+        user.accessToken = accessToken;
+        user.save();
         return done(err, user);
       });
     }

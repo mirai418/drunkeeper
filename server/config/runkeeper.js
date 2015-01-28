@@ -5,25 +5,25 @@ var passport = require('passport');
 // Set up your client's options
 var options = {
 
-    // Client ID (Required): 
-    // This value is the OAuth 2.0 client ID for your application.  
+    // Client ID (Required):
+    // This value is the OAuth 2.0 client ID for your application.
     client_id : "609fbfd328a84f4e9773adfb8cf9f824",
 
-    // Client Secret (Required):  
-    // This value is the OAuth 2.0 shared secret for your application.   
+    // Client Secret (Required):
+    // This value is the OAuth 2.0 shared secret for your application.
     client_secret : "cf21c82d44d741a5ab42356f0a8e4326",
 
     // Authorization URL (Optional, default will work for most apps):
-    // This is the URL to which your application should redirect the user in order to authorize access to his or her RunKeeper account.   
+    // This is the URL to which your application should redirect the user in order to authorize access to his or her RunKeeper account.
     auth_url : "https://runkeeper.com/apps/authorize",
 
     // Access Token URL (Optional, default will work for most apps):
-    // This is the URL at which your application can convert an authorization code to an access token. 
+    // This is the URL at which your application can convert an authorization code to an access token.
     access_token_url : "https://runkeeper.com/apps/token",
 
     // Redirect URI (Optional but defaults to null, which means your app won't be able to use the getNewToken method):
-    // This is the URL that RK sends user to after successful auth  
-    // URI naming based on Runkeeper convention 
+    // This is the URL that RK sends user to after successful auth
+    // URI naming based on Runkeeper convention
     redirect_uri : "/auth/runkeeper/callback",
 
     // Access Token (Optional, defaults to null):
