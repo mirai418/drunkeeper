@@ -16,15 +16,15 @@
     </span>
 
     <span class="pull-right" ng-show="!isLoggedIn">
-    <a href="/#/runkeeper" title="" class="btn v-margin-medium h-margin-x-small" ng-show="!isPath('/login')">
-      RunKeeper
-    </a>
-      <a href="/#/login" title="" class="btn v-margin-medium h-margin-x-small" ng-show="!isPath('/login')">
+      <a href="/auth/runkeeper" target="_self" class="btn v-margin-medium h-margin-x-small" ng-show="!isPath('/runkeeper')" ng-click="clicked = true">
+        Log In With RunKeeper <span class="btn-overlay" ng-show="clicked"><i class="fa fa-circle-o-notch fa-fw fa-spin"></i></span></a>
+      </a>
+<!--       <a href="/#/login" title="" class="btn v-margin-medium h-margin-x-small" ng-show="!isPath('/login')">
         Log In
       </a>
       <a href="/#/signup" title="" class="btn v-margin-medium h-margin-x-small" ng-show="isPath('/login')">
         Sign Up
-      </a>
+      </a> -->
     </span>
 
   </div>

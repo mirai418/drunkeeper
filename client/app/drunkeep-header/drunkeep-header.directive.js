@@ -20,7 +20,6 @@ angular.module('drunkeeperApp')
 
         scope.logout = function () {
           Auth.logout();
-          console.log('logged out');
           $location.path('/');
         };
 
@@ -31,7 +30,6 @@ angular.module('drunkeeperApp')
             scope.isLoggedIn = response;
             if (scope.isLoggedIn) {
               scope.user = Auth.getCurrentUser();
-              console.log(scope.user);
             }
           });
         });

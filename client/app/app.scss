@@ -123,6 +123,7 @@ html, body {
 
 .btn {
   display: inline-block;
+  position: relative;
 
   height: $input-height;
 
@@ -138,16 +139,43 @@ html, body {
   text-transform: uppercase;
   letter-spacing: $input-letter-spacing;
   font-weight: $input-font-weight;
+  text-align: center;
 
-  @include transition((background-color ease-in-out 0.15s, color ease-in-out 0.15s));
+  @include transition((background-color ease-in-out 0.2s, color ease-in-out 0.2s));
 
   &:hover {
     background-color: $theme-hover-color;
     color: $theme-color-dark;
+    @include transition((background-color ease-in-out 0.2s, color ease-in-out 0.2s));
   }
 
   &.btn-narrow {
     padding: $input-padding-size 6px;
+  }
+
+  .btn-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+
+    height: $input-height;
+
+    padding: $input-padding-size 18px;
+
+    background-color: rgba($theme-color, 0.7);
+    border-radius: $input-border-radius;
+    cursor: default;
+
+    line-height: $input-height - (2 * $input-padding-size);
+    font-size: $input-font-size;
+    color: $theme-color-dark;
+    text-transform: uppercase;
+    letter-spacing: $input-letter-spacing;
+    font-weight: $input-font-weight;
+    text-align: center;
+
   }
 
 }
@@ -197,15 +225,20 @@ input {
   outline: 0 !important;
 }
 
-a, a:visited {
+a, a:link, a:visited {
   color: $theme-color-dark;
   text-decoration: none;
+
+  &:hover,
+  &:focus {
+    text-decoration: none;
+  }
+
+  &:focus {
+    // @include tab-focus();
+  }
 }
 
-a:hover, a:active {
-  color: $theme-hover-color;
-  text-decoration: none;
-}
 
 /**************** END UI COMPONENT STYLES ****************/
 
