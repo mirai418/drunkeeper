@@ -1,7 +1,7 @@
 var passport = require('passport');
 var RunKeeperStrategy = require('passport-runkeeper').Strategy;
 
-var runkeeperOptions = require('../../config/runkeeper');
+var runkeeperClient = require('../../config/runkeeper');
 
 exports.setup = function (User, config) {
 
@@ -13,31 +13,43 @@ exports.setup = function (User, config) {
   //   have a database of user records, the complete RunKeeper profile is
   //   serialized and deserialized.
   passport.serializeUser(function(user, done) {
-    console.log('serialize');
-    // console.log(user);
     done(null, user._id);
   });
 
   passport.deserializeUser(function(id, done) {
     User.findById(id, function(err, user) {
-      // console.log('--> hey');
-      // console.log(user);
-      // console.log(err);
       done(err, user);
     });
   });
 
   passport.use(new RunKeeperStrategy({
-      clientID: runkeeperOptions.client_id,
-      clientSecret: runkeeperOptions.client_secret,
-      callbackURL: runkeeperOptions.redirect_uri
+      clientID: runkeeperClient.client_id,
+      clientSecret: runkeeperClient.client_secret,
+      callbackURL: runkeeperClient.redirect_uri
     },
     function(accessToken, refreshToken, profile, done) {
-      console.log(profile);
       User.findOrCreate({ runkeeperId: profile.id }, function (err, user) {
         user.accessToken = accessToken;
-        user.save();
-        return done(err, user);
+
+        if (!user.name) {
+          runkeeperClient.access_token = accessToken;
+          runkeeperClient.profile(function(err, response) {
+              if (err) {
+                console.log(err);
+              }
+              user.name = response.name;
+              user.save(function(err) {
+                if (err) return res.json(422, err);
+                return done(err, user);
+              });
+          });
+        } else {
+          user.save(function(err) {
+            if (err) return res.json(422, err);
+            return done(err, user);
+          });
+        }
+
       });
     }
   ));

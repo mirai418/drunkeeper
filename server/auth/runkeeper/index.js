@@ -4,6 +4,8 @@ var express = require('express');
 var passport = require('passport');
 var auth = require('../auth.service');
 var User = require('../../api/user/user.model');
+var runkeeperClient = require('../../config/runkeeper');
+var runkeeper = require('runkeeper-js');
 
 var router = express.Router();
 

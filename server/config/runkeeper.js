@@ -38,7 +38,7 @@ var options = {
 // Create a Client
 var client = new runkeeper.HealthGraph(options);
 
-module.exports = options;
+module.exports = client;
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If

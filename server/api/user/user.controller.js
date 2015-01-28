@@ -100,7 +100,7 @@ exports.me = function(req, res, next) {
   var userId = req.user._id;
   User.findOne({
     _id: userId
-  }, '-salt -hashedPassword', function(err, user) { // don't ever give out the password or salt
+  }, '-salt -hashedPassword -accessToken', function(err, user) { // don't ever give out the password or salt
     if (err) return next(err);
     if (!user) return res.json(401);
     res.json(user);
@@ -111,12 +111,10 @@ exports.me = function(req, res, next) {
  * Add a drink
  */
 exports.drink = function(req, res, next) {
-  console.log('draaaaaaank');
   var userId = req.user._id;
   User.findOne({
     _id: userId
   }, '-salt -hashedPassword', function(err, user) { // don't ever give out the password or salt
-    console.log('ready');
     if (err) return next(err);
     if (!user) return res.json(401);
     user.drinks.push({});

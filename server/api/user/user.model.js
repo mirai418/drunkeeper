@@ -7,7 +7,7 @@ var findOrCreate = require('mongoose-findorcreate')
 
 var UserSchema = new Schema({
   drinks: [{ date: { type: Date, default: Date.now } }],
-  email: { type: String, lowercase: true },
+  name: String,
   role: {
     type: String,
     default: 'user'
@@ -72,19 +72,19 @@ UserSchema
 //   }, 'Password cannot be blank');
 
 // Validate email is not taken
-UserSchema
-  .path('email')
-  .validate(function(value, respond) {
-    var self = this;
-    this.constructor.findOne({email: value}, function(err, user) {
-      if(err) throw err;
-      if(user) {
-        if(self.id === user.id) return respond(true);
-        return respond(false);
-      }
-      respond(true);
-    });
-}, 'The specified email address is already in use.');
+// UserSchema
+//   .path('email')
+//   .validate(function(value, respond) {
+//     var self = this;
+//     this.constructor.findOne({email: value}, function(err, user) {
+//       if(err) throw err;
+//       if(user) {
+//         if(self.id === user.id) return respond(true);
+//         return respond(false);
+//       }
+//       respond(true);
+//     });
+// }, 'The specified email address is already in use.');
 
 var validatePresenceOf = function(value) {
   return value && value.length;
