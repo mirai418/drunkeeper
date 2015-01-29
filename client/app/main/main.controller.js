@@ -11,15 +11,25 @@
 angular.module('drunkeeperApp')
 .controller('MainCtrl', function ($scope, $http, socket) {
 
-  $scope.mirai = [];
-
   $http.get('/api/users/mirai').success(function (response) {
-    $scope.mirai.push(response);
-    socket.syncUpdates('mirai', $scope.mirai);
+    $scope.mirai = response;
+    // $scope.mirai.push(response);
+    // console.log(response);
+    socket.socket.on('mirai' + ':save', function (res) {
+      $scope.mirai = res;
+    });
   });
 
   $scope.$on('$destroy', function () {
     socket.unsyncUpdates('mirai');
   });
+
+  $scope.getScore = function () {
+    if ($scope.mirai) {
+      return Math.floor($scope.mirai.score);
+    } else {
+      return '';
+    }
+  };
 
 });

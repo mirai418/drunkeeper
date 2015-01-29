@@ -19,6 +19,10 @@ exports.mirai = function(req, res) {
     if(err) return res.send(500, err);
     if (!user) return res.json(401);
     res.json(user);
+    user.computeNewScore(function () {
+      user.save(function (err) {
+      });
+    });
   });
 };
 
@@ -118,10 +122,14 @@ exports.drink = function(req, res, next) {
     if (err) return next(err);
     if (!user) return res.json(401);
     user.drinks.push({});
-    user.save(function(err) {
-      if (err) return validationError(res, err);
-      res.send(200);
-    });
+    res.send(200);
+    user.computeNewScore(function () {
+      user.score = user.score + 1;
+      user.save(function(err) {
+        if (err) return validationError(res, err);
+      });
+    })
+
   });
 };
 
@@ -137,10 +145,30 @@ exports.undrink = function(req, res, next) {
     if (err) return next(err);
     if (!user) return res.json(401);
     user.drinks.pop();
+    user.score = user.score - 1;
     user.save(function(err) {
       if (err) return validationError(res, err);
       res.send(200);
     });
+  });
+};
+
+/**
+ * Remove a drink
+ */
+exports.compute = function(req, res, next) {
+  var userId = req.user._id;
+  User.findOne({
+    _id: userId
+  }, '-salt -hashedPassword', function(err, user) { // don't ever give out the password or salt
+    if (err) return next(err);
+    if (!user) return res.json(401);
+    user.computeNewScore(function () {
+      user.save(function(err) {
+        if (err) return validationError(res, err);
+        res.send(200);
+      });
+    })
   });
 };
 

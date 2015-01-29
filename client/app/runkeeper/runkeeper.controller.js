@@ -1,6 +1,6 @@
 'use strict';
 
 angular.module('drunkeeperApp')
-  .controller('RunkeeperCtrl', function ($scope) {
+  .controller('RunkeeperCtrl', function () {
 
-  })
+  });

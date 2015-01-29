@@ -26,6 +26,121 @@
 
 var User = require('../api/user/user.model');
 
-User.find({}).remove(function() {
-  console.log('removed all users.');
+// User.find({}).remove(function () {
+
+// });
+
+User.findOrCreate({
+  runkeeperId: 31503880
+}, function(err, user) {
+  // user.drinks = [];
+
+  // user.runs = [];
+
+  // user.getNewRuns(function () {
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 12)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 12)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 15)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 15)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 15)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 15)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 15)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 16)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 16)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 16)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 16)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 16)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 16)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 18)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 18)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 18)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 18)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 18)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 18)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 18)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 18)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 18)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 20)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 20)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 20)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 20)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 20)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 20)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 20)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 23)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 23)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 23)
+  //   });
+  //   user.drinks.push({
+  //     date: new Date(2015, 0, 26)
+  //   });
+  //   user.score = 6.05;
+  //   user.lastUpdated = new Date(2015, 0, 28);
+  //   user.save();
+    console.log(user);
+  // });
+
 });

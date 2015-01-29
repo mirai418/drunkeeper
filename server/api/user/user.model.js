@@ -1,5 +1,36 @@
 'use strict';
 
+var MILLISEC_IN_DAY = 1000 * 60 * 60 * 24;
+
+Date.prototype.getWeek = function () {
+
+  var d = new Date(+this);
+  var yearStart = new Date(d.getFullYear(), 0, 1);
+  var yearMillisecOffset = (8 - yearStart.getDay()) * MILLISEC_IN_DAY;
+
+  var yearMillis = d.getTime() - yearStart.getTime();
+  return Math.floor((yearMillis + yearMillisecOffset) / (MILLISEC_IN_DAY * 7));
+
+};
+
+Date.prototype.toRKdate = function () {
+  var year, month, day;
+  year = String(this.getFullYear());
+  month = String(this.getMonth() + 1);
+  if (month.length === 1) {
+    month = "0" + month;
+  }
+  day = String(this.getDate());
+  if (day.length === 1) {
+    day = "0" + day;
+  }
+  return year + "-" + month + "-" + day;
+};
+
+Date.prototype.isToday = function () {
+  return Math.abs(this.getTime() - (new Date().getTime())) < MILLISEC_IN_DAY;
+};
+
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var crypto = require('crypto');
@@ -30,17 +61,6 @@ UserSchema.plugin(findOrCreate);
 /**
  * Virtuals
  */
-// UserSchema
-//   .virtual('password')
-//   .set(function(password) {
-//     this._password = password;
-//     this.salt = this.makeSalt();
-//     this.hashedPassword = this.encryptPassword(password);
-//   })
-//   .get(function() {
-//     return this._password;
-//   });
-
 // Public profile information
 UserSchema
   .virtual('profile')
@@ -65,40 +85,9 @@ var validatePresenceOf = function(value) {
   return value && value.length;
 };
 
-var MILLISEC_IN_DAY = 1000 * 60 * 60 * 24;
-
-Date.prototype.getWeek = function () {
-
-  var d = new Date(+this);
-  var yearStart = new Date(d.getFullYear(), 0, 1);
-  var yearMillisecOffset = (8 - yearStart.getDay()) * MILLISEC_IN_DAY;
-
-  var yearMillis = d.getTime() - yearStart.getTime();
-  return Math.floor((yearMillis + yearMillisecOffset) / (MILLISEC_IN_DAY * 7));
-
-}
-
-Date.prototype.toRKdate = function () {
-  var year, month, day;
-  year = String(this.getFullYear());
-  month = String(this.getMonth() + 1);
-  if (month.length == 1) {
-    month = "0" + month;
-  }
-  day = String(this.getDate());
-  if (day.length == 1) {
-    day = "0" + day;
-  }
-  return year + "-" + month + "-" + day;
-}
-
-Date.prototype.isToday = function () {
-  return Math.abs(this.getTime() - (new Date().getTime())) < MILLISEC_IN_DAY;
-}
-
 var weekDifference = function (d1, d2) {
   return Math.abs(d2.getWeek() - d1.getWeek());
-}
+};
 
 var getActivityFeedEndpoint = function (from, to, page, pageSize) {
 
@@ -114,20 +103,62 @@ var getActivityFeedEndpoint = function (from, to, page, pageSize) {
   params.push('noLaterThan=' + to.toRKdate());
 
   return baseEndPoint + params.join("&");
-}
+};
 
 /**
  * Pre-save hook
  */
 UserSchema
   .pre('save', function(next) {
-    if (!this.isNew) return next();
-
-    // if (!validatePresenceOf(this.hashedPassword))
-      // next(new Error('Invalid password'));
-    // else
       next();
   });
+
+// we need to calculate the score per week, because after each week there
+// is an interest applied to any drinks that have not been run for.
+//
+// assumption: the current score is correct, and the last updated is when
+// the last score has been calculated.
+//
+// in order to do this,
+// 0) we have a prefetched list of all runs that have not been tallied.
+// 1) we will rewind back to when the last update was.
+// 2) apply the runs in order from oldest to newest, until there exists a
+//    run that is newer than the week we are on
+// 3) to any remaining drinks (score), we apply the interest.
+// 4) we forward the week and then repeat, until we run out of runs.
+var computeScoreRecursive = function (weekNum, runs, score, now) {
+  if (runs.length === 0) {
+    return score;
+  }
+
+  var run = runs.shift();
+
+  console.log('weekNum: ' + weekNum);
+
+  // apply all of the runs that are from that week to the score
+  while (run !== undefined) {
+    if (run.date.getWeek() > weekNum) {
+      console.log('run.date.getWeek: ' + run.date.getWeek());
+      // realised this run is for the next week. put it back in the array
+      runs.unshift(run);
+      break;
+    }
+    // otherwise deduct the score at 1km per drink.
+    score = score - (run.distance / 1000);
+    console.log(score);
+    // go to the next run.
+    run = runs.shift();
+  }
+
+  // if the score is above zero, and it is not the current week, we need
+  // to apply interest as these are the drinks that were not satisfied.
+  if (weekNum !== now.getWeek() && score > 0) {
+    score = score * 1.25;
+  }
+
+  return computeScoreRecursive(weekNum + 1, runs, score, now);
+
+};
 
 /**
  * Methods
@@ -152,10 +183,6 @@ UserSchema.methods = {
   },
 
   getNewRuns: function (cb) {
-
-    var TODAY = new Date(2015, 0, 25, 16);
-    console.log('TODAY IS: ' + TODAY);
-
     var self = this;
     runkeeperClient.access_token = self.accessToken;
 
@@ -187,20 +214,27 @@ UserSchema.methods = {
         }
 
       }
-      console.log(newRuns);
       self.runs = self.runs.concat(newRuns);
-      console.log(self.runs);
-      self.lastUpdated = new Date();
-      self.save(function(err) {
-        if (err) {
-          return cb(false);
-        }
-        return cb(true);
-      });
+      return cb(newRuns);
     });
   },
 
-  computeNewScore: function () {
+  computeNewScore: function (cb) {
+    var self = this;
+    var lastUpdated = self.lastUpdated || new Date(2015, 0, 1);
+    var score = self.score || 0;
+    var now = new Date();
+
+    self.getNewRuns(function (newRuns) {
+      if (!newRuns) {
+        return cb(false);
+      }
+      score = computeScoreRecursive(lastUpdated.getWeek(), newRuns, score, now);
+      self.score = score;
+      self.lastUpdated = now;
+      console.log('Score: ' + score);
+      return cb(score);
+    })
 
   },
 

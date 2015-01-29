@@ -1,8 +1,8 @@
 <div class="container v-padding-x-large">
-  <h1 class="text-center v-padding-x-large h-padding-x-large">Your current drun-keep number:</h1>
+  <h1 class="text-center v-padding-x-large h-padding-x-large">Your current DK score:</h1>
 
   <div class="plus-one clickable" ng-click="drink()">
-    <h2 class="text-center">{{user.drinks.length}}</h2>
+    <h2 class="text-center">{{getScore()}}</h2>
   </div>
 
   <div class="minus-one-wrapper">
