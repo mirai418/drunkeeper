@@ -137,9 +137,9 @@ User.findOrCreate({
   //   user.drinks.push({
   //     date: new Date(2015, 0, 26)
   //   });
-  //   user.score = 6.05;
+    // user.score = 6.05;
   //   user.lastUpdated = new Date(2015, 0, 28);
-  //   user.save();
+    // user.save();
     console.log(user);
   // });
 

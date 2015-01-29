@@ -31,6 +31,14 @@ angular.module('drunkeeperApp')
       return Math.floor($scope.user.score);
     };
 
+    $scope.getScore = function () {
+      if ($scope.user) {
+        return Math.floor($scope.user.score);
+      } else {
+        return '';
+      }
+    };
+
     $scope.$on('$destroy', function () {
       socket.unsyncUpdates('user' + String($scope.user.runkeeperId));
     });
