@@ -69,17 +69,6 @@ module.exports = function (grunt) {
         ],
         tasks: ['injector:css']
       },
-      mochaTest: {
-        files: ['server/**/*.spec.js'],
-        tasks: ['env:test', 'mochaTest']
-      },
-      jsTest: {
-        files: [
-          '<%= yeoman.client %>/{app,components}/**/*.spec.js',
-          '<%= yeoman.client %>/{app,components}/**/*.mock.js'
-        ],
-        tasks: ['newer:jshint:all', 'karma']
-      },
       injectSass: {
         files: [
           '<%= yeoman.client %>/{app,components}/**/*.{scss,sass}'],
@@ -98,8 +87,6 @@ module.exports = function (grunt) {
           '{.tmp,<%= yeoman.client %>}/{app,components}/**/*.css',
           '{.tmp,<%= yeoman.client %>}/{app,components}/**/*.html',
           '{.tmp,<%= yeoman.client %>}/{app,components}/**/*.js',
-          '!{.tmp,<%= yeoman.client %>}{app,components}/**/*.spec.js',
-          '!{.tmp,<%= yeoman.client %>}/{app,components}/**/*.mock.js',
           '<%= yeoman.client %>/assets/images/{,*//*}*.{png,jpg,jpeg,gif,webp,svg}'
         ],
         options: {
@@ -133,23 +120,9 @@ module.exports = function (grunt) {
           '!server/**/*.spec.js'
         ]
       },
-      serverTest: {
-        options: {
-          jshintrc: 'server/.jshintrc-spec'
-        },
-        src: ['server/**/*.spec.js']
-      },
       all: [
         '<%= yeoman.client %>/{app,components}/**/*.js',
-        '!<%= yeoman.client %>/{app,components}/**/*.spec.js',
-        '!<%= yeoman.client %>/{app,components}/**/*.mock.js'
-      ],
-      test: {
-        src: [
-          '<%= yeoman.client %>/{app,components}/**/*.spec.js',
-          '<%= yeoman.client %>/{app,components}/**/*.mock.js'
-        ]
-      }
+      ]
     },
 
     // Empties folders to start fresh
@@ -223,7 +196,7 @@ module.exports = function (grunt) {
       target: {
         src: '<%= yeoman.client %>/index.html',
         ignorePath: '<%= yeoman.client %>/',
-        exclude: ['/json3/', '/es5-shim/', /font-awesome.css/ ]
+        exclude: ['/font-awesome.css/' ]
       }
     },
 
@@ -425,34 +398,6 @@ module.exports = function (grunt) {
       ]
     },
 
-    // Test settings
-    karma: {
-      unit: {
-        configFile: 'karma.conf.js',
-        singleRun: true
-      }
-    },
-
-    mochaTest: {
-      options: {
-        reporter: 'spec'
-      },
-      src: ['server/**/*.spec.js']
-    },
-
-    protractor: {
-      options: {
-        configFile: 'protractor.conf.js'
-      },
-      chrome: {
-        options: {
-          args: {
-            browser: 'chrome'
-          }
-        }
-      }
-    },
-
     env: {
       test: {
         NODE_ENV: 'test'
@@ -562,14 +507,21 @@ module.exports = function (grunt) {
 
   grunt.registerTask('serve', function (target) {
     if (target === 'dist') {
-      return grunt.task.run(['build', 'env:all', 'env:prod', 'express:prod', 'wait', 'open', 'express-keepalive']);
+      return grunt.task.run([
+        'build',
+        'env:all','env:prod',
+        'express:prod',
+        'wait',
+        'open',
+        'express-keepalive'
+      ]);
     }
 
     if (target === 'debug') {
       return grunt.task.run([
         'clean:server',
         'env:all',
-        'injector:sass', 
+        'injector:sass',
         'concurrent:server',
         'injector',
         'wiredep',
@@ -581,7 +533,7 @@ module.exports = function (grunt) {
     grunt.task.run([
       'clean:server',
       'env:all',
-      'injector:sass', 
+      'injector:sass',
       'concurrent:server',
       'injector',
       'wiredep',
@@ -593,56 +545,9 @@ module.exports = function (grunt) {
     ]);
   });
 
-  grunt.registerTask('server', function () {
-    grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
-    grunt.task.run(['serve']);
-  });
-
-  grunt.registerTask('test', function(target) {
-    if (target === 'server') {
-      return grunt.task.run([
-        'env:all',
-        'env:test'
-        // 'mochaTest'
-      ]);
-    }
-
-    else if (target === 'client') {
-      return grunt.task.run([
-        'clean:server',
-        'env:all',
-        'injector:sass', 
-        'concurrent:test',
-        'injector',
-        'autoprefixer'
-        // 'karma'
-      ]);
-    }
-
-    else if (target === 'e2e') {
-      return grunt.task.run([
-        'clean:server',
-        'env:all',
-        'env:test',
-        'injector:sass', 
-        'concurrent:test',
-        'injector',
-        'wiredep',
-        'autoprefixer',
-        'express:dev',
-        'protractor'
-      ]);
-    }
-
-    else grunt.task.run([
-      'test:server',
-      'test:client'
-    ]);
-  });
-
   grunt.registerTask('build', [
     'clean:dist',
-    'injector:sass', 
+    'injector:sass',
     'concurrent:dist',
     'injector',
     'wiredep',
@@ -661,7 +566,6 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', [
     'newer:jshint',
-    'test',
     'build'
   ]);
 };
