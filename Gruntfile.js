@@ -132,6 +132,7 @@ module.exports = function (grunt) {
           dot: true,
           src: [
             '.tmp',
+            '.sass-cache',
             '<%= yeoman.dist %>/*',
             '!<%= yeoman.dist %>/.git*',
             '!<%= yeoman.dist %>/.openshift',
