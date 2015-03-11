@@ -1,13 +1,15 @@
-<div class="container v-padding-x-large">
+<div class="container v-padding-x-large header-padding">
   <h1 class="text-center v-padding-x-large h-padding-x-large">Your current DK score:</h1>
 
   <div class="plus-one clickable" ng-click="drink()">
-    <h2 class="text-center">{{getScore()}}</h2>
+    <h2 ng-show="!loading.plus"class="text-center">{{getScore()}}</h2>
+    <h6 ng-show="loading.plus" class="text-center"><i class="fa fa-circle-o-notch fa-fw fa-spin"></i></h6>
   </div>
 
   <div class="minus-one-wrapper">
     <div class="minus-one" ng-click="undrink()">
-      <h6>-1</h6>
+      <h6 ng-show="!loading.minus">-1</h6>
+      <h6 ng-show="loading.minus" class="text-center"><i class="fa fa-circle-o-notch fa-fw fa-spin"></i></h6>
     </div>
   </div>
 

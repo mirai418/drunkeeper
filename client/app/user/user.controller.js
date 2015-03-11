@@ -3,26 +3,35 @@
 angular.module('drunkeeperApp')
   .controller('UserCtrl', function ($scope, $http, User, Auth, socket) {
 
+    $scope.loading = {};
+
     $scope.user = Auth.getCurrentUser();
-    $scope.$watch(function () {
-      return $scope.user;
-    }, function (newValue) {
-      socket.socket.on('user' + String(newValue.runkeeperId) + ':save', function (res) {
+    Auth.isLoggedInAsync(function () {
+      socket.socket.on('user' + String($scope.user.runkeeperId) + ':save', function (res) {
         $scope.user = res;
+      });
+      $http.post('/api/users/calcScore').success(function () {
       });
     });
 
-    $http.post('/api/users/compute').success(function() {
-    });
-
     $scope.drink = function () {
-      $http.post('/api/users/drink').success(function() {
+      if ($scope.loading.plus) {
+        return;
+      }
+      $scope.loading.plus = true;
+      $http.post('/api/users/drink').success(function () {
+        $scope.loading.plus = false;
         $scope.user.score = $scope.user.score + 1;
       });
     };
 
     $scope.undrink = function () {
-      $http.post('/api/users/undrink').success(function() {
+      if ($scope.loading.minus) {
+        return;
+      }
+      $scope.loading.minus = true;
+      $http.post('/api/users/undrink').success(function () {
+        $scope.loading.minus = false;
         $scope.user.score = $scope.user.score - 1;
       });
     };

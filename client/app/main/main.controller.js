@@ -15,13 +15,13 @@ angular.module('drunkeeperApp')
     $scope.mirai = response;
     // $scope.mirai.push(response);
     // console.log(response);
-    socket.socket.on('mirai' + ':save', function (res) {
+    socket.socket.on('mirai:save', function (res) {
       $scope.mirai = res;
     });
   });
 
   $scope.$on('$destroy', function () {
-    socket.unsyncUpdates('mirai');
+    socket.unsyncUpdates('mirai:save');
   });
 
   $scope.getScore = function () {
