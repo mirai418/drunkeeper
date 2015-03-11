@@ -31,7 +31,9 @@ exports.setup = function (User, config) {
       User.findOrCreate({ runkeeperId: profile.id }, function (err, user) {
         user.accessToken = accessToken;
 
-        user.computeNewScore(function (success) {
+        user.calcScore([], function () {
+          user.save(function (err) {
+          });
         });
 
         if (!user.name) {

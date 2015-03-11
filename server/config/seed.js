@@ -30,9 +30,9 @@ var User = require('../api/user/user.model');
 
 // });
 
-User.findOrCreate({
-  runkeeperId: 31503880
-}, function(err, user) {
+// User.findOrCreate({
+//   runkeeperId: 31503880
+// }, function(err, user) {
   // user.drinks = [];
 
   // user.runs = [];
@@ -140,7 +140,7 @@ User.findOrCreate({
     // user.score = 6.05;
   //   user.lastUpdated = new Date(2015, 0, 28);
     // user.save();
-    console.log(user);
+    // console.log(user);
   // });
 
-});
+// });

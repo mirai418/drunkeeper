@@ -13,7 +13,9 @@ router.delete('/:id', auth.hasRole('admin'), controller.destroy);
 router.get('/me', auth.isAuthenticated(), controller.me);
 router.post('/drink', auth.isAuthenticated(), controller.drink);
 router.post('/undrink', auth.isAuthenticated(), controller.undrink);
-router.post('/compute', auth.isAuthenticated(), controller.compute);
+router.post('/calcScore', auth.isAuthenticated(), controller.calcScore);
+router.post('/recalcScore', auth.isAuthenticated(), controller.recalcScore);
+
 
 router.put('/:id/password', auth.isAuthenticated(), controller.changePassword);
 router.get('/:id', auth.isAuthenticated(), controller.show);

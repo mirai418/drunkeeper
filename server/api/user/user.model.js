@@ -1,6 +1,9 @@
 'use strict';
 
 var MILLISEC_IN_DAY = 1000 * 60 * 60 * 24;
+var FITNESS_ACTIVITY_MEDIA_TYPE = 'application/vnd.com.runkeeper.FitnessActivityFeed+json';
+var BET_START_DATE = new Date(2015, 0, 1);
+var INTEREST_RATE = 1.25;
 
 Date.prototype.getWeek = function () {
 
@@ -25,10 +28,6 @@ Date.prototype.toRKdate = function () {
     day = "0" + day;
   }
   return year + "-" + month + "-" + day;
-};
-
-Date.prototype.isToday = function () {
-  return Math.abs(this.getTime() - (new Date().getTime())) < MILLISEC_IN_DAY;
 };
 
 var mongoose = require('mongoose');
@@ -56,39 +55,66 @@ var UserSchema = new Schema({
 
 });
 
+var weekDifference = function (d1, d2) {
+  return Math.abs(d2.getWeek() - d1.getWeek());
+};
+
+var validatePresenceOf = function (value) {
+  return value && value.length;
+};
+
+/******************************************* END UTILITY METHODS *******************************************/
+
+
 UserSchema.plugin(findOrCreate);
+
+/**
+ * Pre-save hook
+ */
+UserSchema.pre('save', function (next) {
+  next();
+});
 
 /**
  * Virtuals
  */
 // Public profile information
-UserSchema
-  .virtual('profile')
-  .get(function() {
-    return {
-      'name': this.name,
-      'role': this.role
-    };
-  });
+UserSchema.virtual('profile').get(function () {
+  return {
+    'name': this.name,
+    'role': this.role
+  };
+});
 
 // Non-sensitive info we'll be putting in the token
-UserSchema
-  .virtual('token')
-  .get(function() {
-    return {
-      '_id': this._id,
-      'role': this.role
-    };
+UserSchema.virtual('token').get(function () {
+  return {
+    '_id': this._id,
+    'role': this.role
+  };
+});
+
+/**
+* Recursively gets all possible runs, by accessing the next page if there is any.
+*/
+var getAllRuns = function (accumulator, accessToken, endPoint, cb) {
+  runkeeperClient.access_token = accessToken;
+  runkeeperClient.apiCall('GET', FITNESS_ACTIVITY_MEDIA_TYPE, endPoint, function (err, response) {
+    if (err) {
+      return cb(false);
+    }
+    accumulator = accumulator.concat(response.items);
+    if (response.next) {
+      return getAllRuns(accumulator, accessToken, response.next, cb);
+    } else {
+      return cb(accumulator);
+    }
   });
-
-var validatePresenceOf = function(value) {
-  return value && value.length;
 };
 
-var weekDifference = function (d1, d2) {
-  return Math.abs(d2.getWeek() - d1.getWeek());
-};
-
+/**
+* Generates the endpoint url in the right format based on dates, page and page size
+*/
 var getActivityFeedEndpoint = function (from, to, page, pageSize) {
 
   to = to || new Date();
@@ -106,58 +132,79 @@ var getActivityFeedEndpoint = function (from, to, page, pageSize) {
 };
 
 /**
- * Pre-save hook
- */
-UserSchema
-  .pre('save', function(next) {
-      next();
-  });
+* computeScore walks through the weeks applying each week with the
+* respective number of drinks, and then the respective number of runs.
+* at the end, if its a computation from a past week, it will apply interest
+* accordingly.
+*
+* Precondition: score is correct until startDate.
+* Postcondition: score is correct until endDate.
+*/
+var computeScore = function (startDate, endDate, runs, drinks, score) {
+  score = score || 0;
+  var endWeek = endDate.getWeek();
+  var run, drink;
 
-// we need to calculate the score per week, because after each week there
-// is an interest applied to any drinks that have not been run for.
-//
-// assumption: the current score is correct, and the last updated is when
-// the last score has been calculated.
-//
-// in order to do this,
-// 0) we have a prefetched list of all runs that have not been tallied.
-// 1) we will rewind back to when the last update was.
-// 2) apply the runs in order from oldest to newest, until there exists a
-//    run that is newer than the week we are on
-// 3) to any remaining drinks (score), we apply the interest.
-// 4) we forward the week and then repeat, until we run out of runs.
-var computeScoreRecursive = function (weekNum, runs, score, now) {
-  if (runs.length === 0) {
-    return score;
-  }
+  // the week incrementor.
+  var visitingWeek = startDate.getWeek();
 
-  var run = runs.shift();
-
-  console.log('weekNum: ' + weekNum);
-
-  // apply all of the runs that are from that week to the score
-  while (run !== undefined) {
-    if (run.date.getWeek() > weekNum) {
-      console.log('run.date.getWeek: ' + run.date.getWeek());
-      // realised this run is for the next week. put it back in the array
-      runs.unshift(run);
-      break;
+  // we end when we have visited every week between startDate and endDate
+  while (visitingWeek <= endWeek) {
+    // get the next oldest drink.
+    drink = drinks.shift();
+    // apply all of the drinks that are from that week to the score
+    while (drink !== undefined) {
+      // we ignore the drink counter if the drink is from before the startDate
+      // or after the endDate.
+      // the precondition implies this drink has already been included.
+      // the postcondition does not care about anything that happens after
+      // so just throw away.
+      if (drink.date > startDate && drink.date < endDate) {
+        // these drinks are all in the dates within start - end date.
+        if (drink.date.getWeek() > visitingWeek) {
+          // realised this drink is for the next week. put it back in the array
+          drinks.unshift(drink);
+          break;
+        }
+        // otherwise add score
+        score++;
+      }
+      // go to the next drink.
+      drink = drinks.shift();
     }
-    // otherwise deduct the score at 1km per drink.
-    score = score - (run.distance / 1000);
-    console.log(score);
-    // go to the next run.
+
+    // get the next oldest run.
     run = runs.shift();
+    // apply all of the runs that are from that week to the score like drinks
+    while (run !== undefined) {
+
+      if (run.date > startDate && run.date < endDate) {
+        if (run.date.getWeek() > visitingWeek) {
+          // realised this run is for the next week. put it back in the array
+          runs.unshift(run);
+          break;
+        }
+        // otherwise deduct the score at 1km per drink.
+        score = score - (run.distance / 1000);
+      }
+      // go to the next run.
+      run = runs.shift();
+    }
+
+    // at this point, the score is accurate until the end of the visiting week.
+    // so if theres any score left, apply interest and move on.
+    // the only time we don't apply interest is if we are visiting the endWeek.
+    // presumably, this "endWeek" has not ended  yet, so we should wait to
+    // appl the interest.
+    if (visitingWeek !== endWeek && score > 0) {
+      score = score * INTEREST_RATE;
+    }
+
+    // now visit the next week and do the same thing.
+    visitingWeek++;
   }
 
-  // if the score is above zero, and it is not the current week, we need
-  // to apply interest as these are the drinks that were not satisfied.
-  if (weekNum !== now.getWeek() && score > 0) {
-    score = score * 1.25;
-  }
-
-  return computeScoreRecursive(weekNum + 1, runs, score, now);
-
+  return score;
 };
 
 /**
@@ -165,6 +212,9 @@ var computeScoreRecursive = function (weekNum, runs, score, now) {
  */
 UserSchema.methods = {
 
+  /**
+   * getRunkeeperName - fetches the user's name from runkeeper.
+   */
   getRunkeeperName: function (cb) {
     var self = this;
     runkeeperClient.access_token = self.accessToken;
@@ -182,60 +232,61 @@ UserSchema.methods = {
     });
   },
 
-  getNewRuns: function (cb) {
+  /**
+   * calcScore - calcualtes a new score based on the previous score.
+   *
+   * 1) refetches all the runs from the beginning of the bet from runkeeper
+   * 2) use the computScore method to walk through the weeks and apply the runs/drinks
+   */
+  calcScore: function (drinks, cb) {
     var self = this;
-    runkeeperClient.access_token = self.accessToken;
+    var endPoint = getActivityFeedEndpoint(this.lastUpdated);
 
-    var media_type = 'application/vnd.com.runkeeper.FitnessActivityFeed+json';
-    var from = self.lastUpdated || new Date(2015, 0, 1);
-    var endpoint = getActivityFeedEndpoint(from);
-
-    runkeeperClient.apiCall('GET', media_type, endpoint, function (err, response) {
-      if (err) {
-        return cb(false);
+    getAllRuns([], this.accessToken, endPoint, function (runs) {
+      if (!runs) {
+        console.log('something went wrong 1');
       }
-      var runs = response.items;
       var newRuns = [];
       var runId, date, distance;
-      var lastRunId = (self.runs.length === 0) ? 0 : self.runs[self.runs.length - 1].runId;
+      var now = new Date();
 
+      // lets organise the runs obtained from runkeeper into our own language.
       for (var i = 0; i < runs.length; i++) {
         runId = parseInt(runs[i].uri.split("/")[2], 10);
-        if (runId > lastRunId) {
-          date = new Date(runs[i].start_time);
-          distance = runs[i].total_distance;
-          newRuns.unshift({
-            runId: runId,
-            date: date,
-            distance: distance
-          });
-        } else {
-          console.log('already recorded');
-        }
-
+        date = new Date(runs[i].start_time);
+        distance = runs[i].total_distance;
+        // we want the oldest run to be in arr[0]
+        // so array is in cronologically ascending order
+        newRuns.unshift({
+          runId: runId,
+          date: date,
+          distance: distance
+        });
       }
       self.runs = self.runs.concat(newRuns);
-      return cb(newRuns);
+
+      self.score = computeScore(self.lastUpdated, now, newRuns.slice(), drinks.slice(), self.score);
+      self.lastUpdated = now;
+      console.log('score: ' + self.score);
+      return cb(self.score);
     });
   },
 
-  computeNewScore: function (cb) {
-    var self = this;
-    var lastUpdated = self.lastUpdated || new Date(2015, 0, 1);
-    var score = self.score || 0;
-    var now = new Date();
+  /**
+   * recalcScore - recalculates all the scores from scratch. computation expensive
+   * do not over use.
+   *
+   * rests the user run, score and last updated and calls calcScore to compute the score.
+   */
+  recalcScore: function (cb) {
 
-    self.getNewRuns(function (newRuns) {
-      if (!newRuns) {
-        return cb(false);
-      }
-      score = computeScoreRecursive(lastUpdated.getWeek(), newRuns, score, now);
-      self.score = score;
-      self.lastUpdated = now;
-      console.log('Score: ' + score);
-      return cb(score);
-    })
+    // warning, very destrucitve action upon save.
+    // reset everything except drinks.
+    this.runs = [];
+    this.score = 0;
+    this.lastUpdated = BET_START_DATE;
 
+    return this.calcScore(this.drinks, cb);
   },
 
   /**
