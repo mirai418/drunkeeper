@@ -5,3 +5,5 @@ public
 .idea
 client/bower_components
 /server/config/local.env.js
+
+/server/config/runkeeper.js
