@@ -117,6 +117,7 @@ var getAllRuns = function (accumulator, accessToken, endPoint, cb) {
 */
 var getActivityFeedEndpoint = function (from, to, page, pageSize) {
 
+  from = from || BET_START_DATE;
   to = to || new Date();
   page = page || 0;
   pageSize = pageSize || 25;
