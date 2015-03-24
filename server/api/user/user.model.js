@@ -3,7 +3,7 @@
 var MILLISEC_IN_DAY = 1000 * 60 * 60 * 24;
 var FITNESS_ACTIVITY_MEDIA_TYPE = 'application/vnd.com.runkeeper.FitnessActivityFeed+json';
 var BET_START_DATE = new Date(2015, 0, 1);
-var INTEREST_RATE = 1.25;
+var INTEREST_RATE = 1.05;
 
 Date.prototype.getWeek = function () {
 
@@ -150,6 +150,7 @@ var computeScore = function (startDate, endDate, runs, drinks, score) {
 
   // we end when we have visited every week between startDate and endDate
   while (visitingWeek <= endWeek) {
+    console.log("visitingWeek: " + visitingWeek);
     // get the next oldest drink.
     drink = drinks.shift();
     // apply all of the drinks that are from that week to the score
@@ -196,9 +197,11 @@ var computeScore = function (startDate, endDate, runs, drinks, score) {
     // the only time we don't apply interest is if we are visiting the endWeek.
     // presumably, this "endWeek" has not ended  yet, so we should wait to
     // appl the interest.
+    console.log("score before: " + score);
     if (visitingWeek !== endWeek && score > 0) {
       score = score * INTEREST_RATE;
     }
+    console.log("score after: " + score);
 
     // now visit the next week and do the same thing.
     visitingWeek++;
