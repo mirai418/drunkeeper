@@ -1,3 +1,5 @@
+// create file runkeeper.js based on this file, filling in the actual credentials.
+
 // Require RunKeeper.js
 var runkeeper = require('runkeeper-js');
 var passport = require('passport');
@@ -7,11 +9,11 @@ var options = {
 
     // Client ID (Required):
     // This value is the OAuth 2.0 client ID for your application.
-    client_id : "609fbfd328a84f4e9773adfb8cf9f824",
+    client_id : "",
 
     // Client Secret (Required):
     // This value is the OAuth 2.0 shared secret for your application.
-    client_secret : "cf21c82d44d741a5ab42356f0a8e4326",
+    client_secret : "",
 
     // Authorization URL (Optional, default will work for most apps):
     // This is the URL to which your application should redirect the user in order to authorize access to his or her RunKeeper account.
