@@ -268,6 +268,7 @@ UserSchema.methods = {
         });
       }
       self.runs = self.runs.concat(newRuns);
+      self.lastUpdated = self.lastUpdated || BET_START_DATE;
 
       self.score = computeScore(self.lastUpdated, now, newRuns.slice(), drinks.slice(), self.score);
       self.lastUpdated = now;
